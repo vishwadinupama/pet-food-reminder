@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Plus, Trash2, Clock, CheckCircle } from 'lucide-react';
 
 const ScheduleConfig = ({ pet, onUpdate, onBack }) => {
     const [time, setTime] = useState('');
-    const [startTime, setStartTime] = useState('08:00'); // Default start time for 6h cycle
+    const [startTime, setStartTime] = useState('08:00');
 
     const addTime = (e) => {
         e.preventDefault();
@@ -44,7 +46,6 @@ const ScheduleConfig = ({ pet, onUpdate, onBack }) => {
         }
 
         const newSchedule = [...(pet.schedule || []), ...newTimes].sort();
-        // Dedup just in case
         const uniqueSchedule = [...new Set(newSchedule)];
 
         onUpdate({ ...pet, schedule: uniqueSchedule });
@@ -56,7 +57,12 @@ const ScheduleConfig = ({ pet, onUpdate, onBack }) => {
     };
 
     return (
-        <div className="glass-panel" style={{ animation: 'fadeIn 0.3s ease-in-out', marginBottom: '80px' }}>
+        <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+        >
             <button
                 onClick={onBack}
                 style={{
@@ -64,45 +70,56 @@ const ScheduleConfig = ({ pet, onUpdate, onBack }) => {
                     color: 'var(--text-secondary)',
                     marginBottom: '10px',
                     padding: '0',
-                    cursor: 'pointer',
-                    border: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
                     fontSize: '1rem'
                 }}
             >
-                ← Back
+                <ArrowLeft size={18} /> Back
             </button>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <div>
-                    <h2 style={{ marginBottom: '5px' }}>{pet.name}</h2>
-                    <p style={{ color: 'var(--text-secondary)' }}>Manage feeding schedule</p>
+            <div className="glass-panel" style={{ marginBottom: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                        <h2 style={{ marginBottom: '0px' }}>{pet.name}</h2>
+                        <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', background: 'rgba(255,255,255,0.5)', padding: '2px 8px', borderRadius: '8px' }}>
+                            {pet.type}
+                        </span>
+                    </div>
+                    <motion.button
+                        onClick={logFeeding}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        style={{
+                            background: 'var(--success-color)',
+                            color: 'white',
+                            padding: '10px 20px',
+                            borderRadius: '16px',
+                            fontWeight: '600',
+                            boxShadow: '0 4px 15px rgba(0, 184, 148, 0.4)',
+                            border: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}
+                    >
+                        Fed Now! 🍖
+                    </motion.button>
                 </div>
-                <button
-                    onClick={logFeeding}
-                    style={{
-                        background: 'var(--success-color)',
-                        color: '#2d3436',
-                        padding: '8px 16px',
-                        borderRadius: '20px',
-                        fontWeight: '600',
-                        boxShadow: '0 4px 10px rgba(85, 239, 196, 0.4)',
-                        cursor: 'pointer'
-                    }}
-                >
-                    Fed Now! 🍖
-                </button>
             </div>
 
-            <div style={{ marginBottom: '30px' }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '10px' }}>Quick Scheduler</h3>
+            <div className="glass-panel" style={{ marginBottom: '20px' }}>
+                <h3 style={{ fontSize: '1rem', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Clock size={16} color="var(--accent-color)" /> Quick Scheduler
+                </h3>
                 <div style={{
                     background: 'rgba(255,255,255,0.4)',
-                    padding: '15px',
+                    padding: '16px',
                     borderRadius: '16px',
-                    marginBottom: '20px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '10px'
+                    gap: '12px'
                 }}>
                     <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Generate 4 feedings every 6 hours:</p>
                     <div style={{ display: 'flex', gap: '10px' }}>
@@ -110,12 +127,8 @@ const ScheduleConfig = ({ pet, onUpdate, onBack }) => {
                             type="time"
                             value={startTime}
                             onChange={(e) => setStartTime(e.target.value)}
-                            style={{
-                                padding: '10px',
-                                borderRadius: '10px',
-                                border: 'none',
-                                background: 'white'
-                            }}
+                            className="glass-input"
+                            style={{ padding: '10px', flex: 1, textAlign: 'center' }}
                         />
                         <button
                             onClick={apply6HourCycle}
@@ -123,28 +136,26 @@ const ScheduleConfig = ({ pet, onUpdate, onBack }) => {
                                 background: 'var(--accent-color)',
                                 color: 'white',
                                 padding: '10px 15px',
-                                borderRadius: '10px',
+                                borderRadius: '12px',
                                 fontSize: '0.9rem',
-                                flex: 1
+                                fontWeight: '600'
                             }}
                         >
-                            Apply 6h Cycle
+                            Apply Cycle
                         </button>
                     </div>
                 </div>
+            </div>
 
-                <h3 style={{ fontSize: '1rem', marginBottom: '10px' }}>Scheduled Times</h3>
-                <form onSubmit={addTime} style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+            <div className="glass-panel" style={{ marginBottom: '20px' }}>
+                <h3 style={{ fontSize: '1rem', marginBottom: '15px' }}>Scheduled Times</h3>
+                <form onSubmit={addTime} style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
                     <input
                         type="time"
                         value={time}
                         onChange={(e) => setTime(e.target.value)}
-                        style={{
-                            flex: 1,
-                            padding: '12px',
-                            borderRadius: '12px',
-                            background: 'rgba(255,255,255,0.5)'
-                        }}
+                        className="glass-input"
+                        style={{ flex: 1, padding: '12px' }}
                     />
                     <button
                         type="submit"
@@ -152,82 +163,83 @@ const ScheduleConfig = ({ pet, onUpdate, onBack }) => {
                             background: 'var(--text-primary)',
                             color: 'white',
                             borderRadius: '12px',
-                            padding: '0 20px'
+                            padding: '0 20px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
                         }}
                     >
-                        Add
+                        <Plus size={20} />
                     </button>
                 </form>
 
                 {!pet.schedule || pet.schedule.length === 0 ? (
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>No times set yet.</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textAlign: 'center', padding: '10px' }}>No times set yet.</p>
                 ) : (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '10px' }}>
                         {pet.schedule.map((t, index) => (
-                            <div
+                            <motion.div
                                 key={index}
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
                                 style={{
                                     background: 'white',
-                                    padding: '8px 12px',
-                                    borderRadius: '20px',
+                                    padding: '10px',
+                                    borderRadius: '12px',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '8px',
-                                    boxShadow: '0 2px 5px rgba(0,0,0,0.05)'
+                                    justifyContent: 'space-between',
+                                    boxShadow: '0 2px 5px rgba(0,0,0,0.03)'
                                 }}
                             >
-                                <span>{t}</span>
+                                <span style={{ fontWeight: '500' }}>{t}</span>
                                 <button
                                     onClick={() => removeTime(t)}
                                     style={{
-                                        background: '#ff7675',
-                                        color: 'white',
-                                        borderRadius: '50%',
-                                        width: '20px',
-                                        height: '20px',
+                                        color: 'var(--danger-color)',
+                                        background: 'rgba(255, 118, 117, 0.1)',
+                                        borderRadius: '8px',
+                                        width: '24px',
+                                        height: '24px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        fontSize: '12px',
-                                        border: 'none',
-                                        cursor: 'pointer',
-                                        marginLeft: '5px'
                                     }}
                                 >
-                                    ×
+                                    <Trash2 size={14} />
                                 </button>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
                 )}
             </div>
 
-            <div>
-                <h3 style={{ fontSize: '1rem', marginBottom: '10px' }}>Recent Feedings</h3>
+            <div className="glass-panel">
+                <h3 style={{ fontSize: '1rem', marginBottom: '15px' }}>History</h3>
                 {!pet.feedings || pet.feedings.length === 0 ? (
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>No feeding history yet.</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textAlign: 'center' }}>No feeding history yet.</p>
                 ) : (
                     <ul style={{ listStyle: 'none', padding: 0 }}>
-                        {pet.feedings.map((timestamp, index) => (
+                        {pet.feedings.slice(0, 5).map((timestamp, index) => (
                             <li
                                 key={index}
                                 style={{
-                                    padding: '10px',
-                                    borderBottom: '1px solid rgba(0,0,0,0.05)',
+                                    padding: '12px',
+                                    borderBottom: index !== pet.feedings.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none',
                                     fontSize: '0.9rem',
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     alignItems: 'center'
                                 }}
                             >
-                                <span>{formatDate(timestamp)}</span>
-                                <span style={{ color: 'var(--success-color)', fontWeight: 'bold' }}>✓</span>
+                                <span style={{ color: 'var(--text-primary)' }}>{formatDate(timestamp)}</span>
+                                <CheckCircle size={16} color="var(--success-color)" />
                             </li>
                         ))}
                     </ul>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };
 

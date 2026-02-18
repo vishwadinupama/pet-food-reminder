@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 const AddPetForm = ({ onAdd, onCancel }) => {
     const [name, setName] = useState('');
@@ -14,82 +15,86 @@ const AddPetForm = ({ onAdd, onCancel }) => {
     };
 
     return (
-        <div className="glass-panel" style={{ animation: 'fadeIn 0.3s ease-in-out' }}>
-            <h2 style={{ marginBottom: '15px', color: 'var(--text-primary)' }}>Add New Pet</h2>
+        <motion.div
+            className="glass-panel"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ type: "spring", duration: 0.5 }}
+        >
+            <h2 style={{ marginBottom: '20px', color: 'var(--text-primary)' }}>Add New Pet</h2>
             <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '15px' }}>
-                    <label style={{ display: 'block', marginBottom: '5px', color: 'var(--text-secondary)' }}>Pet Name</label>
+                <div style={{ marginBottom: '20px' }}>
+                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '600' }}>Pet Name</label>
                     <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        style={{
-                            width: '100%',
-                            padding: '12px',
-                            borderRadius: '12px',
-                            border: 'none',
-                            background: 'rgba(255,255,255,0.5)',
-                            marginBottom: '10px'
-                        }}
+                        className="glass-input"
+                        style={{ width: '100%', padding: '16px' }}
                         placeholder="e.g. Fluffy"
+                        autoFocus
                     />
                 </div>
 
-                <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'block', marginBottom: '5px', color: 'var(--text-secondary)' }}>Type</label>
-                    <select
-                        value={type}
-                        onChange={(e) => setType(e.target.value)}
-                        style={{
-                            width: '100%',
-                            padding: '12px',
-                            borderRadius: '12px',
-                            border: 'none',
-                            background: 'rgba(255,255,255,0.5)'
-                        }}
-                    >
-                        <option value="Dog">Dog</option>
-                        <option value="Cat">Cat</option>
-                        <option value="Bird">Bird</option>
-                        <option value="Other">Other</option>
-                    </select>
+                <div style={{ marginBottom: '30px' }}>
+                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '600' }}>Type</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                        {['Dog', 'Cat', 'Bird', 'Other'].map((t) => (
+                            <button
+                                key={t}
+                                type="button"
+                                onClick={() => setType(t)}
+                                style={{
+                                    padding: '12px',
+                                    borderRadius: '12px',
+                                    border: type === t ? '2px solid var(--accent-color)' : '1px solid transparent',
+                                    background: type === t ? 'rgba(108, 92, 231, 0.1)' : 'rgba(255,255,255,0.4)',
+                                    color: type === t ? 'var(--accent-color)' : 'var(--text-secondary)',
+                                    fontWeight: type === t ? '700' : '400',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                {t}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                <div style={{ display: 'flex', gap: '15px' }}>
                     <button
                         type="button"
                         onClick={onCancel}
                         style={{
-                            padding: '10px 20px',
-                            borderRadius: '12px',
+                            flex: 1,
+                            padding: '16px',
+                            borderRadius: '16px',
                             background: 'transparent',
-                            color: 'var(--text-secondary)'
+                            color: 'var(--text-secondary)',
+                            fontWeight: '600'
                         }}
                     >
                         Cancel
                     </button>
-                    <button
+                    <motion.button
                         type="submit"
-                        className="primary-btn"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         style={{
-                            padding: '10px 20px',
-                            borderRadius: '12px',
+                            flex: 2,
+                            padding: '16px',
+                            borderRadius: '16px',
                             background: 'var(--accent-color)',
                             color: 'white',
-                            boxShadow: '0 4px 14px 0 rgba(255, 118, 117, 0.39)'
+                            fontWeight: '700',
+                            boxShadow: '0 8px 20px rgba(108, 92, 231, 0.3)'
                         }}
                     >
                         Add Pet
-                    </button>
+                    </motion.button>
                 </div>
             </form>
-            <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
-        </div>
+        </motion.div>
     );
 };
 

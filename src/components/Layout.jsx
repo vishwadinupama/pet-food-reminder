@@ -1,92 +1,107 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Home, Plus, Settings } from 'lucide-react';
 
 const Layout = ({ children, activeTab, onTabChange }) => {
   return (
     <div className="app-container">
-      <header className="glass-panel" style={{
-        textAlign: 'center',
-        padding: '15px',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 100,
-        borderRadius: '0 0 24px 24px',
-        margin: 0,
-        backdropFilter: 'blur(20px)'
-      }}>
-        <h1 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--text-primary)' }}>
-          🐾 Pet Feeder
-        </h1>
-      </header>
+      {/* Dynamic Header based on scroll/state could go here, but keeping it clean for now */}
 
       <main style={{
-        paddingTop: '80px',
-        paddingBottom: '90px',
+        paddingTop: '20px',
+        paddingBottom: '100px', // Space for bottom nav
         minHeight: '100vh',
-        overflowY: 'auto'
+        overflowY: 'auto',
+        paddingLeft: '20px',
+        paddingRight: '20px'
       }}>
-        {children}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <nav className="glass-panel" style={{
         position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
+        bottom: '20px',
+        left: '20px',
+        right: '20px',
         margin: 0,
-        borderRadius: '24px 24px 0 0',
-        padding: '15px 30px',
+        borderRadius: '24px',
+        padding: '12px 30px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        zIndex: 100
+        zIndex: 100,
+        background: 'rgba(255, 255, 255, 0.85)' // Slightly more opaque for nav
       }}>
-        <button
+        <NavButton
+          active={activeTab === 'pets'}
           onClick={() => onTabChange('pets')}
-          style={{
-            background: 'none',
-            color: activeTab === 'pets' ? 'var(--accent-color)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'pets' ? '600' : '400',
-            fontSize: '1.5rem'
-          }}
-        >
-          🐶
-        </button>
+          icon={<Home size={24} />}
+          label="Pets"
+        />
 
-        <button
-          onClick={() => onTabChange('add')}
-          style={{
-            background: 'var(--accent-color)',
-            color: 'white',
-            width: '56px',
-            height: '56px',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.8rem',
-            boxShadow: '0 4px 15px rgba(255, 118, 117, 0.4)',
-            marginTop: '-40px'
-          }}
-        >
-          +
-        </button>
+        <div style={{ position: 'relative', width: '56px', height: '56px' }}>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onTabChange('add')}
+            style={{
+              position: 'absolute',
+              top: '-28px',
+              left: '0',
+              background: 'var(--accent-color)',
+              color: 'white',
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 8px 20px rgba(108, 92, 231, 0.4)',
+              border: '4px solid rgba(255,255,255,0.8)'
+            }}
+          >
+            <Plus size={28} strokeWidth={2.5} />
+          </motion.button>
+        </div>
 
-        <button
+        <NavButton
+          active={activeTab === 'settings'}
           onClick={() => onTabChange('settings')}
-          style={{
-            background: 'none',
-            color: activeTab === 'settings' ? 'var(--accent-color)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'settings' ? '600' : '400',
-            fontSize: '1.5rem'
-          }}
-        >
-          ⚙️
-        </button>
+          icon={<Settings size={24} />}
+          label="Settings"
+        />
       </nav>
     </div>
   );
 };
+
+const NavButton = ({ active, onClick, icon, label }) => (
+  <button
+    onClick={onClick}
+    style={{
+      background: 'none',
+      color: active ? 'var(--accent-color)' : 'var(--text-secondary)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '4px',
+      opacity: active ? 1 : 0.6,
+      transition: 'all 0.2s'
+    }}
+  >
+    {icon}
+    <span style={{ fontSize: '10px', fontWeight: '500' }}>{label}</span>
+  </button>
+);
 
 export default Layout;

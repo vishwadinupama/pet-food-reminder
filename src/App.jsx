@@ -86,7 +86,9 @@ function App() {
   } else if (activeTab === 'pets') {
     content = pets.length === 0 ? (
       <div className="glass-panel" style={{ textAlign: 'center', padding: '40px 20px', marginTop: '50px' }}>
-        <p style={{ color: 'var(--text-secondary)' }}>No pets yet. Tap + below to add one! 🐾</p>
+        <p style={{ fontSize: '3rem', marginBottom: '10px', filter: 'grayscale(0.5)' }}>🐾</p>
+        <h3 style={{ marginBottom: '5px' }}>No pets yet</h3>
+        <p style={{ color: 'var(--text-secondary)' }}>Tap the <span style={{ color: 'var(--accent-color)', fontWeight: 'bold' }}>+</span> button below to start!</p>
       </div>
     ) : (
       <PetList pets={pets} onDelete={deletePet} onSelect={setSelectedPet} />
